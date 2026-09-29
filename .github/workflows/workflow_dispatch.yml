@@ -1,0 +1,22 @@
+#####
+#Objeto deste workflow é demonstrar o uso do evento workflow_dispatch, que permite a execução manual de workflows no GitHub Actions. 
+#Ele inclui uma entrada booleana chamada EXECUTAR_TESTE, que pode ser configurada pelo usuário ao iniciar o workflow. Dependendo do valor dessa entrada, um passo condicional será executado, exibindo uma mensagem se a entrada for verdadeira.
+####
+
+name: Workflow Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      EXECUTAR_TESTE:
+        description: 'Input a boolean value'
+        required: true
+        default: 'false'
+
+jobs:
+  workflow_dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Condicional Step
+        if: ${{ github.event.inputs.EXECUTAR_TESTE == 'true'}}
+        run: echo "A entrada boleana é verdadeira!"
