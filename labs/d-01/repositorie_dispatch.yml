@@ -1,0 +1,13 @@
+name: Repositorie Dispatch
+
+on:
+  repository_dispatch:
+    types: [custom-event]
+
+jobs:
+  repository_dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository dispatch step
+        run: |
+           echo "Workflow acionado por evento de repositorio dispatch! Mensagem recebida: ${{ github.event.client_payload.message}}"

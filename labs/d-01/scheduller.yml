@@ -1,0 +1,13 @@
+name: Orkflow Scheduller
+
+on:
+  schedule:
+    - cron: '0 11 * * *'
+
+jobs:
+  schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Schedule step
+        run: |
+          echo "Workflow executado via scheduller! Data e hora atual: $(date)"
