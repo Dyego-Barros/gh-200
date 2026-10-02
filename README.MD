@@ -1,1 +1,1 @@
-![CI Python](https://github.com/Dyego-Barros/gh-200/actions/workflows/workflow_dispatch.yml/badge.svg)
+[![Workflow Dispatch](https://github.com/Dyego-Barros/gh-200/actions/workflows/workflow_dispatch.yml/badge.svg)](https://github.com/Dyego-Barros/gh-200/actions/workflows/workflow_dispatch.yml)
