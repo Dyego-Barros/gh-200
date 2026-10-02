@@ -1,0 +1,91 @@
+name: CI Python
+run-name: Build de ${{ github.ref_name}} por ${{github.actor}}
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+
+#Define os Jobs que serão executados no workflow
+jobs:
+  #Primeiro job do workflow sera execucao de testes unitarios
+  test:
+    if: $[{github.ref_name == main || github.ref_name == develop}]
+    runs-on: ubuntu-latest
+
+    strategy:      
+      fails-fast: true
+      max-parallel: 1
+
+    matrix:
+        python-version: [3.14]
+
+    steps:
+      - name: Checkout Codigo
+        uses: actions/checkout@v3
+        #working-directory: ./labs/d-02
+      
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
+
+      - name: Instalar Dependencias
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install uv
+          uv sync
+
+      - name: Executar Testes Unitarios
+        run: |
+          uv run pytest
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    strategy:      
+      fails-fast: true
+      max-parallel: 1
+      
+    matrix:
+        python-version: [3.14]
+        
+    container:
+      image: python:3.14-slim
+
+    steps:
+      - name: Chekout Codigo
+        uses: actions/checkout@v3
+        working-diretory: ./labs/d-02
+
+      - name: Versao do Python
+        run: |
+          python3 --version
+
+      - name: Instalar Dependencias
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install uv
+          uv sync
+
+      - name: Build Python
+        run: |
+          uv run build
+
+  codeql:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Chekout Codigo
+        uses: actions/checkout@v3
+        working-diretory: ./labs/d-02
+
+      - name: COnfigurar CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
+
+      - name: Executar CodeQl
+        uses: github/codeql-action/analyze@v2

@@ -1,0 +1,21 @@
+name: Action usando GITHUB_ENV
+
+on:
+  push:
+    branches: ["main", "develop"]
+
+jobs:
+  set-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Seta variavel
+        run: | 
+          echo "MY_ENV_VAR=Hello World" >>$MY_ENV
+
+  echo-env:
+    runs-on: ubuntu-latest
+    needs: set-env
+    steps:
+      - name: Exibe variavel
+        run: |
+          echo "Valor da variavel: $MY_ENV"

@@ -1,0 +1,1 @@
+![CI Python](https://github.com/Dyego-Barros/gh-200/actions/workflows/workflow_dispatch.yaml/badge.svg)

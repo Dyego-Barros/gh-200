@@ -1,0 +1,44 @@
+name: Cache Python
+
+on:
+  push:
+    branches: ["main", "develop"]
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codigo
+        uses: actions/checkout@v3
+
+  setup-python:
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
+          cache: 'pip' #Desta forma o cache é feito automaticamente, não sendo necessário criar um job separado para isso.
+
+
+  cache-dependencies:
+    runs-on: ubuntu-latest
+    needs: setup-python
+    steps:
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+  install-dependencies:
+    runs-on: ubuntu-latest
+    needs: cache-dependencies
+    steps:
+      - name: Instala Dependencias
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
