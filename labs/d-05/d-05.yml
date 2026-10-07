@@ -1,0 +1,26 @@
+name: Github Script
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  comments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add comment to issue
+        uses: actions/github-script@v6
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            github.issues.createComent({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Obrigado por abrir uma issue! A equipe irá analisar e responder em breve.
+              '})
+            github.projects.createCard({
+              column_id: {{ columnID}}
+              content_id: context.payload.issue.id
+              content_type: 'Issue'
+              })

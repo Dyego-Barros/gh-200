@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% block content %}
+<div class="row g-5 align-items-center mb-5"><div class="col-lg-8"><p class="eyebrow">PREPARAÇÃO PARA A CERTIFICAÇÃO</p><h1 class="display-5 fw-bold">Sua próxima rodada<br>de conhecimento.</h1><p class="lead text-secondary mt-3">Pratique GitHub Actions com questões sorteadas e descubra quais assuntos merecem mais atenção.</p></div><div class="col-lg-4"><div class="card p-4 shadow-sm"><h2 class="h5">Um estudo equilibrado</h2><p>Até 60 questões · 100 minutos</p><p class="text-secondary">Selecione os níveis para sua rodada. Com os três níveis, serão 20 questões de cada.</p><form method="post" action="{{ url_for('start') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="level_filter" value="1">
+<fieldset class="mb-3"><legend class="fs-6">Níveis de conhecimento</legend>
+{% for level in ['Básico', 'Intermediário', 'Avançado'] %}
+<div class="form-check"><input class="form-check-input" type="checkbox" name="levels" id="level-{{ loop.index }}" value="{{ level }}" {% if counts.get(level, 0) %}checked{% else %}disabled{% endif %}><label class="form-check-label" for="level-{{ loop.index }}">{{ level }}</label></div>
+{% endfor %}
+</fieldset>
+<p class="small text-secondary">As questões são distribuídas entre os níveis escolhidos, sem repetição. Se houver menos de 60 disponíveis, a rodada usará todas. O prazo é de 100 minutos. Uma rodada em andamento com os mesmos níveis será retomada.</p>
+<button class="btn btn-primary w-100" {% if not counts %}disabled{% endif %}>Iniciar ou retomar rodada →</button></form></div></div></div>
+<div class="row g-3 mb-5">{% for level in ['Básico','Intermediário','Avançado'] %}<div class="col-md-4"><div class="card p-4"><span class="text-secondary">{{ level }}</span><strong class="fs-2">{{ counts.get(level, 0) }} <small class="fs-6 fw-normal">questões no banco</small></strong></div></div>{% endfor %}</div>
+{% if not counts %}<div class="alert alert-warning">O banco de questões ainda não foi importado. Consulte as instruções de configuração no README.</div>{% endif %}
+<h2 class="h4 mb-3">Suas rodadas</h2><p class="text-secondary small">Histórico deste navegador. Mantenha os cookies para acessar suas rodadas.</p>
+{% for attempt in attempts %}<a class="card p-3 mb-2 text-decoration-none" href="{{ url_for('study', attempt_id=attempt.id) }}"><div class="d-flex justify-content-between"><span>Rodada {{ attempt.id[:8] }}</span><span>{% if attempt.finished_at %}Ver resultado{% elif attempt.deadline <= now %}Tempo encerrado · ver resultado{% else %}Continuar →{% endif %}</span></div></a>{% else %}<div class="card p-4 text-secondary">Sua primeira rodada começa aqui. Ao terminar, você poderá revisar todas as respostas.</div>{% endfor %}
+{% endblock %}

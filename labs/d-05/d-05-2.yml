@@ -1,0 +1,32 @@
+name: Estudando Github Actions
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  comments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Adicionando comentário
+        uses: actions/github-scripts@v6
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner 
+              repo: context.repo.repo
+              body: 'Obrigado por abrir uma issue! A equipe irá analisar e responder em breve'})
+      - name: Adicionar card ao projeto
+        if: contains (github.event.issue.labels.*.name, 'bug')
+        uses: actions/github-scripts@v6
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            github.projects.createCards({
+              column_id: {{columnID}},
+              content_id: context.payload.issue.id,
+              content_type: 'Issue'
+              
+              })
